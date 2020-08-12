@@ -5,9 +5,12 @@
         "es6": true,
         "jest": true
     },
-    "extends": ["airbnb-base", "prettier"],
+    "extends": ["plugin:react/recommended", "airbnb-base", "prettier"],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
         "ecmaVersion": 6,
         "sourceType": "module"
     },
@@ -22,8 +25,14 @@
         "import/resolver": {
             "node": {
                 "paths": ["src"],
-                "extensions": [".ts"]
+                "extensions": [".ts", ".tsx"]
             }
+        },
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "detect",
+            "flowVersion": "0.53"
         }
     }
 }
