@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/notificationui",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "TypeScript notification component for extending with all features described and partially implemented",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -36,7 +36,7 @@
     },
     "homepage": "https://github.com/ETSOO/NotificationBase#readme",
     "dependencies": {
-        "@etsoo/notificationbase": "^1.0.8",
+        "@etsoo/notificationbase": "^1.0.9",
         "@types/react": "^16.9.46",
         "@types/react-dom": "^16.9.8",
         "react": "^16.13.1",
