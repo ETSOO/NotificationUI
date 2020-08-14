@@ -52,6 +52,8 @@ export function NotificationUI(props: NotificationUIProps) {
             (notifiction) => notifiction.id === notifictionId
         );
 
+        console.log(notifictionId, index);
+
         if (index !== -1) {
             // Remove from the collection and return the item
             const removed = notifications.splice(index, 1)[0];
