@@ -65,9 +65,6 @@ export function NotificationUI(props: NotificationUIProps) {
         return undefined;
     };
 
-    // Register current UI to the global container
-    NotificationContainer.register(addNotification, removeNotification);
-
     // Render notifications
     const renderNotifications = () => {
         return notifications.map((notification) =>
@@ -75,12 +72,17 @@ export function NotificationUI(props: NotificationUIProps) {
         );
     };
 
+    // Layout ready
     React.useEffect(() => {
+        // Register current UI to the global container
+        NotificationContainer.register(addNotification, removeNotification);
+
         return () => {
             // Dispose all notifications to avoid any timeout memory leak
             notifications.forEach((notification) => notification.dispose());
         };
     }, []);
 
+    // Return composition
     return React.createElement('div', { className }, renderNotifications());
 }
