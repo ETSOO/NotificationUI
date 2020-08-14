@@ -1,3 +1,3 @@
 export * from './NotificationReact';
 export * from './NotificationUI';
-export { NotificationContainer } from '@etsoo/notificationbase';
+export * from '@etsoo/notificationbase';
