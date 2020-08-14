@@ -52,7 +52,10 @@ export function NotificationUI(props: NotificationUIProps) {
             (notifiction) => notifiction.id === notifictionId
         );
 
-        console.log(notifictionId, index);
+        console.log(notifictionId, index, notifications.length);
+        notifications.forEach((n) => {
+            console.log(n.id);
+        });
 
         if (index !== -1) {
             // Remove from the collection and return the item
