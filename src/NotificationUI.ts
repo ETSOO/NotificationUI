@@ -47,27 +47,11 @@ export function NotificationUI(props: NotificationUIProps) {
      * @param notifictionId Notification id
      */
     const removeNotification = (notifictionId: string) => {
-        // Find match index
-        const index = notifications.findIndex(
-            (notifiction) => notifiction.id === notifictionId
-        );
+        // Filter
+        const temp = notifications.filter((n) => n.id !== notifictionId);
 
-        console.log(notifictionId, index, notifications.length);
-        notifications.forEach((n) => {
-            console.log(n.id);
-        });
-
-        if (index !== -1) {
-            // Remove from the collection and return the item
-            const removed = notifications.splice(index, 1)[0];
-
-            // Update
-            updateNotifications(notifications);
-
-            return removed;
-        }
-
-        return undefined;
+        // Update
+        updateNotifications(temp);
     };
 
     // Render notifications
@@ -77,11 +61,12 @@ export function NotificationUI(props: NotificationUIProps) {
         );
     };
 
+    // Register current UI to the global container
+    // Every update should register again under functional component
+    NotificationContainer.register(addNotification, removeNotification);
+
     // Layout ready
     React.useEffect(() => {
-        // Register current UI to the global container
-        NotificationContainer.register(addNotification, removeNotification);
-
         return () => {
             // Dispose all notifications to avoid any timeout memory leak
             notifications.forEach((notification) => notification.dispose());
