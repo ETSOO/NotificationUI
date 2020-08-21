@@ -24,6 +24,11 @@ export interface NotificationDisplayProps {
     ): React.ReactNode;
 
     /**
+     * UI labels
+     */
+    labels?: object;
+
+    /**
      * Each notification style class name
      */
     itemClassName?: string;
@@ -34,7 +39,7 @@ export interface NotificationDisplayProps {
  */
 export function NotificationDisplay(props: NotificationDisplayProps) {
     // Destruct
-    const { className, createContainer, itemClassName } = props;
+    const { className, createContainer, labels = {}, itemClassName } = props;
 
     // User state to hold notification count
     const [count, updateCount] = React.useState(0);
@@ -60,7 +65,7 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
 
             // UI collections
             const ui = notifications.map((notification) =>
-                notification.render(itemClassName)
+                notification.render(itemClassName, labels)
             );
 
             // Add to the collection
