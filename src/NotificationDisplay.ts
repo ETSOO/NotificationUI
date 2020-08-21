@@ -1,4 +1,5 @@
 import React from 'react';
+import { DataTypes } from '@etsoo/shared';
 import {
     NotificationContainer,
     NotificationAlign
@@ -26,7 +27,7 @@ export interface NotificationDisplayProps {
     /**
      * UI labels
      */
-    labels?: object;
+    labels?: DataTypes.ReadonlyStringDictionary;
 
     /**
      * Each notification style class name
@@ -39,7 +40,7 @@ export interface NotificationDisplayProps {
  */
 export function NotificationDisplay(props: NotificationDisplayProps) {
     // Destruct
-    const { className, createContainer, labels = {}, itemClassName } = props;
+    const { className, createContainer, labels, itemClassName } = props;
 
     // User state to hold notification count
     const [count, updateCount] = React.useState(0);
