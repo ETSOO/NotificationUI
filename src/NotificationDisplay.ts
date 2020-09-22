@@ -90,5 +90,9 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
     }, []);
 
     // Return composition
-    return React.createElement('div', { className }, renderNotifications());
+    return React.createElement(
+        'div',
+        { className, count },
+        renderNotifications()
+    );
 }
