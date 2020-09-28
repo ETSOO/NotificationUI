@@ -1,5 +1,4 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import { NotificationDisplay } from '../src/NotificationDisplay';
 import { NotificationReact } from '../src/NotificationReact';
 import {
@@ -7,8 +6,9 @@ import {
     NotificationType,
     NotificationAlign
 } from '@etsoo/notificationbase';
-import Enzyme, { shallow } from 'enzyme';
+import Enzyme, { mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { act } from 'react-dom/test-utils';
 
 // Class implementation for tests
 class NotificationReactTest extends NotificationReact {
@@ -19,7 +19,7 @@ class NotificationReactTest extends NotificationReact {
     render(className?: string) {
         return (
             <div key={this.id} className={className}>
-                {this.content}
+                {this.open ? this.content : ''}
             </div>
         );
     }
@@ -47,55 +47,6 @@ const displayUI = (
     />
 );
 
-test('Tests for NotificationUI with react-test-renderer', () => {
-    // Arrange
-    // Render the UI in the document
-    const ui = renderer.create(displayUI);
-
-    // Notification object
-    const notification = new NotificationReactTest(
-        NotificationType.Loading,
-        'Loading...'
-    );
-    notification.timespan = 3;
-
-    const childrenBefore = ui.root.findAllByProps(
-        { className: 'item' },
-        { deep: true }
-    );
-    expect(childrenBefore.length).toBe(0);
-
-    // Rerenderer test
-    // https://reactjs.org/docs/test-utils.html#act
-    renderer.act(() => {
-        // Add the notification
-        NotificationContainer.add(notification);
-    });
-
-    // setTimeout should be called 1 time
-    expect(setTimeout).toBeCalled();
-
-    // The child added
-    const children = ui.root.findAllByProps(
-        { className: 'item' },
-        { deep: true }
-    );
-    expect(children.length).toBe(1);
-
-    renderer.act(() => {
-        // Fast forward
-        // Remove the child
-        jest.runOnlyPendingTimers();
-    });
-
-    const childrenNow = ui.root.findAllByProps(
-        { className: 'item' },
-        { deep: true }
-    );
-
-    expect(childrenNow.length).toBe(0);
-});
-
 test('Tests for NotificationUI with enzyme', () => {
     // Arrange
 
@@ -103,15 +54,14 @@ test('Tests for NotificationUI with enzyme', () => {
     Enzyme.configure({ adapter: new Adapter() });
 
     // Render the UI in the document
-    const ui = shallow(displayUI);
+    const ui = mount(displayUI);
+    const container = ui.find('div.test').first();
 
     // Align groups
     // Object.keys(Enum) will return string and number keys
-    expect(ui.children().length).toBe(
+    expect(container.children().length).toBe(
         Object.keys(NotificationAlign).length / 2
     );
-
-    expect(ui.children().children('.item').length).toBe(0);
 
     // Notification object
     const notification = new NotificationReactTest(
@@ -120,19 +70,25 @@ test('Tests for NotificationUI with enzyme', () => {
     );
     notification.timespan = 3;
 
-    // Add the notification
-    NotificationContainer.add(notification);
+    act(() => {
+        // Add the notification
+        NotificationContainer.add(notification);
+    });
 
-    ui.update();
-    expect(ui.children().children('.item').length).toBe(1);
-    expect(ui.children().children('.item').text()).toBe('Loading...');
+    // Unkown node
+    const unkownDiv = container.find('div.unknown').first();
 
-    // Fast forward
-    // Remove the child
-    jest.runOnlyPendingTimers();
+    // Node text
+    expect(unkownDiv.text()).toBe('Loading...');
 
-    ui.update();
-    expect(ui.children().children('.item').length).toBe(0);
+    act(() => {
+        // Fast forward
+        // Remove the child
+        jest.runOnlyPendingTimers();
+    });
+
+    expect(unkownDiv.text()).toBe('');
+    expect(NotificationContainer.alignCount(NotificationAlign.Unknown)).toBe(0);
 });
 
 jest.clearAllTimers();

@@ -45,15 +45,6 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
     // User state to hold notification count
     const [count, updateCount] = React.useState(0);
 
-    /**
-     * Update notification callback
-     * @param notifictionId Notification id
-     * @param remove Is remove action
-     */
-    const updateNotification = (notifictionId: string, remove: boolean) => {
-        updateCount(NotificationContainer.count);
-    };
-
     // Render notifications
     const renderNotifications = () => {
         // Aligns collection
@@ -77,17 +68,42 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
         return aligns;
     };
 
-    // Register current UI to the global container
-    // Every update should register again under functional component
-    NotificationContainer.register(updateNotification);
-
     // Layout ready
     React.useEffect(() => {
+        // Register current UI to the global container
+        // Every update should register again under functional component
+        let registerCalled = 0;
+        NotificationContainer.register(() => {
+            registerCalled++;
+            updateCount(registerCalled);
+        });
+
         return () => {
             // Dispose all notifications to avoid any timeout memory leak
             NotificationContainer.dispose();
         };
     }, []);
+
+    React.useEffect(() => {
+        // First time generation and no notification yet
+        if (count === 0) return;
+
+        // Remove from the collection with open = false, and dispose it
+        for (const align in NotificationContainer.notifications) {
+            // Notifications under the align
+            const notifications = NotificationContainer.notifications[align];
+
+            // Loop to remove close item
+            const len = notifications.length - 1;
+            for (let n = len; n >= 0; n--) {
+                const notification = notifications[n];
+                if (!notification.open) {
+                    notification.dispose();
+                    notifications.splice(n, 1);
+                }
+            }
+        }
+    }, [count]);
 
     // Return composition
     return React.createElement(
