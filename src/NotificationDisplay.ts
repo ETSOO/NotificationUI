@@ -89,20 +89,7 @@ export function NotificationDisplay(props: NotificationDisplayProps) {
         if (count === 0) return;
 
         // Remove from the collection with open = false, and dispose it
-        for (const align in NotificationContainer.notifications) {
-            // Notifications under the align
-            const notifications = NotificationContainer.notifications[align];
-
-            // Loop to remove close item
-            const len = notifications.length - 1;
-            for (let n = len; n >= 0; n--) {
-                const notification = notifications[n];
-                if (!notification.open) {
-                    notification.dispose();
-                    notifications.splice(n, 1);
-                }
-            }
-        }
+        NotificationContainer.clear();
     }, [count]);
 
     // Return composition
