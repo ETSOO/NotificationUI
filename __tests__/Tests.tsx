@@ -68,11 +68,13 @@ test('Tests for NotificationUI with enzyme', () => {
         NotificationType.Loading,
         'Loading...'
     );
-    notification.timespan = 3;
 
     act(() => {
         // Add the notification
         NotificationContainer.add(notification);
+
+        // Fast forward
+        jest.runOnlyPendingTimers();
     });
 
     // Unkown node
@@ -82,8 +84,10 @@ test('Tests for NotificationUI with enzyme', () => {
     expect(unkownDiv.text()).toBe('Loading...');
 
     act(() => {
+        // Dismiss it
+        notification.dismiss();
+
         // Fast forward
-        // Remove the child
         jest.runOnlyPendingTimers();
     });
 
