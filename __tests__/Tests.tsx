@@ -6,9 +6,8 @@ import {
     NotificationType,
     NotificationAlign
 } from '@etsoo/notificationbase';
-import Enzyme, { mount } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
 import { act } from 'react-dom/test-utils';
+import { render, unmountComponentAtNode } from 'react-dom';
 
 // Class implementation for tests
 class NotificationReactTest extends NotificationReact {
@@ -47,19 +46,35 @@ const displayUI = (
     />
 );
 
+let root: HTMLDivElement | null = null;
+beforeEach(() => {
+  // setup a DOM element as a render target
+  root = document.createElement("div");
+  document.body.appendChild(root);
+});
+
+afterEach(() => {
+  // cleanup on exiting
+  if(root != null) {
+    unmountComponentAtNode(root);
+    root.remove();
+    root = null;
+  }
+});
+
 test('Tests for NotificationUI with enzyme', () => {
     // Arrange
 
-    // Setup adapter
-    Enzyme.configure({ adapter: new Adapter() });
-
     // Render the UI in the document
-    const ui = mount(displayUI);
-    const container = ui.find('div.test').first();
+    render(displayUI, root);
+    const container = root?.querySelector('div.test');
+    
+    // Container
+    expect(container).not.toBeNull();
 
     // Align groups
     // Object.keys(Enum) will return string and number keys
-    expect(container.children().length).toBe(
+    expect(container?.childNodes.length).toBe(
         Object.keys(NotificationAlign).length / 2
     );
 
@@ -78,10 +93,10 @@ test('Tests for NotificationUI with enzyme', () => {
     });
 
     // Unkown node
-    const unkownDiv = container.find('div.unknown').first();
+    const unkownDiv = container?.querySelector('div.unknown');
 
     // Node text
-    expect(unkownDiv.text()).toBe('Loading...');
+    expect(unkownDiv?.textContent).toBe('Loading...');
 
     act(() => {
         // Dismiss it
@@ -91,7 +106,7 @@ test('Tests for NotificationUI with enzyme', () => {
         jest.runOnlyPendingTimers();
     });
 
-    expect(unkownDiv.text()).toBe('');
+    expect(unkownDiv?.textContent).toBe('');
     expect(NotificationContainer.alignCount(NotificationAlign.Unknown)).toBe(0);
 });
 
